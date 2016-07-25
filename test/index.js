@@ -1,4 +1,4 @@
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import * as app from '../src';
 import path from 'path';
 
@@ -13,7 +13,12 @@ describe('finding files', () => {
 });
 
 describe('finding alias definitions', () => {
-  it('should find all defined aliases in a path');
+  it('should find all defined aliases in a path', () => {
+    return app.findAliases(fixtures).then(aliases => {
+      const expected = ['A', 'B'];
+      return expect(Object.keys(aliases)).to.eql(expected);
+    });
+  });
 
   it('should produce a map of "alias": "absolute_path"');
 });
