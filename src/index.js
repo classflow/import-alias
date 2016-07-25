@@ -1,5 +1,6 @@
 import fileFinder from './file-finder';
 import fs from 'fs';
+import path from 'path';
 
 const extensionRegex = /\.(js(x)?|es6)$/;
 
@@ -60,4 +61,42 @@ export const findAliases = (dirPath) => {
       return result;
     });
   });
+};
+
+// Returns relative path without file extension.
+function getRelativePath(fromFile, toFile) {
+  return path.relative(fromFile, toFile)
+    .replace(/\.\w+$/, '');
 }
+
+export const replaceImports = (aliases, input, inputFilePath) => {
+
+  let result = input;
+
+  const importRegex = /(import.+from\s+['"])(@(\w+))(.+)/g;
+  result = input.replace(importRegex, (orig, m1, aliasMarker, importedAlias, m4) => {
+
+    // console.log('What marker did we find?', importedAlias);
+
+    // console.log('m1', m1);
+    // console.log('aliasMarker', aliasMarker);
+    // console.log('importedAlias', importedAlias);
+    // console.log('m4', m4);
+
+    // Does the list of aliases have an entry for this?
+    const aliasFilePath = aliases[importedAlias];
+
+    if (!aliasFilePath) {
+      console.log('aliases', aliases);
+      throw new Error(
+        `You are trying to import "${aliasMarker}" but it is not defined.`);
+    }
+
+    const relativePath = getRelativePath(inputFilePath, aliasFilePath);
+    const marker = `// @${importedAlias}`;
+
+    return `${m1}${relativePath}${m4} ${marker}`;
+  });
+
+  return result;
+};
