@@ -1,0 +1,1 @@
+* handle import and require
