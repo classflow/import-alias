@@ -51,7 +51,7 @@ export const findAliases = (dirPath) => {
     })).then(fileAliases => {
       const result = {};
 
-      fileAliases.sort().map((alias, i) => {
+      fileAliases.map((alias, i) => {
         if (alias) {
           result[alias] = files[i];
         }
