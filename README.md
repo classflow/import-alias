@@ -50,6 +50,14 @@ import B from '../foo/B'; // @B
 ```
 
 
+
+
+
+
+
+## notes
+finds all js, jsx, and es6 files
+
 ---
 kickstarted by [npm-boom][npm-boom]
 

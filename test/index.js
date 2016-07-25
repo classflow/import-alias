@@ -5,11 +5,9 @@ import path from 'path';
 const fixtures = path.join(__dirname, 'fixtures');
 
 describe('finding files', () => {
-  it.only('should find all js files recursively', () => {
+  it('should find all js files recursively', () => {
     return app.findFiles(fixtures).then(files => {
-      console.log('all the files...');
-      console.log(files);
-      expect(files.length).to.equal(3);
+      expect(files.length).to.equal(5);
     });
   });
 });
