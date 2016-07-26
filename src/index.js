@@ -70,8 +70,15 @@ export const findAliases = (dirPath) => {
 
 // Returns relative path without file extension.
 function getRelativePath(fromFile, toFile) {
-  return path.relative(fromFile, toFile)
-    .replace(/\.\w+$/, '');
+  let newPath = path.relative(path.join(fromFile, '..'), toFile)
+    .replace(/\.\w+$/, '')
+    .replace(/\/index$/, '');
+
+  if (newPath[0] !== '.') {
+    newPath = `.${path.sep}${newPath}`;
+  }
+
+  return newPath;
 }
 
 function getAliasFromMarker(marker) {
@@ -117,3 +124,27 @@ export const replaceImports = (aliases, input, inputFilePath) => {
 
   return result;
 };
+
+// If this is the main module, run it.
+if (require.main === module) {
+  const srcDir = process.cwd();
+  console.log(`running import-alias on ${srcDir}`);
+
+  findAliases(srcDir).then(aliases => {
+
+    if (Object.keys(aliases).length) {
+      findFiles(srcDir).then(files => {
+
+        files.map(file => {
+          const content = fs.readFileSync(file, 'utf8');
+          const transformed = replaceImports(aliases, content, file);
+
+          if (transformed !== content) {
+            fs.writeFileSync(file, transformed);
+            console.log(`transformed ${file}`);
+          }
+        });
+      });
+    }
+  });
+}
