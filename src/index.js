@@ -54,6 +54,11 @@ export const findAliases = (dirPath) => {
 
       fileAliases.map((alias, i) => {
         if (alias) {
+
+          if (result[alias]) {
+            console.warn(`"${alias}" has already been defined as an alias.\n${alias}: ${result[alias]}`)
+          }
+
           result[alias] = files[i];
         }
       });
@@ -100,7 +105,7 @@ export const replaceImports = (aliases, input, inputFilePath) => {
     const aliasFilePath = aliases[alias];
 
     if (!aliasFilePath) {
-      console.log('aliases', aliases);
+      // console.log('aliases', aliases);
       throw new Error(
         `You are trying to import "@${alias}" but it is not defined.`);
     }

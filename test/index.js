@@ -14,6 +14,7 @@ const aliasPaths = {
 
 const importingFiles = {
   c: path.join(fixtures, 'a/b/c.js'),
+  'unknown-alias': path.join(fixtures, 'importers/unknown-alias'),
 };
 
 describe('finding files', () => {
@@ -35,6 +36,8 @@ describe('finding alias definitions', () => {
       return expect(aliases).to.eql(expected);
     });
   });
+
+  it('should warn about duplicate alias definitions');
 });
 
 describe('replacing alias imports', () => {
@@ -69,6 +72,20 @@ describe('replacing alias imports', () => {
       };
 
       expect(fixtureCompare(fixture, transform)).to.equal(true);
+    });
+  });
+
+  describe('when importing an unknown alias', () => {
+    it('should throw', () => {
+      const inputFilePath = importingFiles['unknown-alias'];
+      const aliases = {};
+      const inputText = fs.readFileSync(inputFilePath, 'utf8');
+      const fn = () => {
+        app.replaceImports(aliases, inputText, inputFilePath);
+      };
+
+      expect(fn).to
+        .throw('You are trying to import "@unknown" but it is not defined.');
     });
   });
 });
