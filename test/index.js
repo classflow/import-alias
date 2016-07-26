@@ -1,12 +1,19 @@
 import { expect } from 'chai';
 import * as app from '../src';
 import path from 'path';
+import fs from 'fs';
+import fixtureCompare from 'fixture-compare';
 
 const fixtures = path.join(__dirname, 'fixtures');
 const aliasPaths = {
   A: path.join(fixtures, 'foo/bar/baz/A.js'),
+  ANewPath: path.join(fixtures, 'a/b/some/new/path/A.js'),
   B: path.join(fixtures, 'foo/B.js'),
   Component1: path.join(fixtures, 'foo/bar/Component1.es6'),
+};
+
+const importingFiles = {
+  c: path.join(fixtures, 'a/b/c.js'),
 };
 
 describe('finding files', () => {
@@ -31,33 +38,37 @@ describe('finding alias definitions', () => {
 });
 
 describe('replacing alias imports', () => {
-  describe('import foo from \'@foo\';', () => {
-    it('should replace "@foo" with the relative path and append alias', () => {
-      const input = 'import foo from \'@foo\';';
+  describe('two imported aliases', () => {
+    it('should replace correctly', () => {
+      const fixture = 'a/b/import-two-aliases';
       const aliases = {
-        foo: '/a/b/c/d/foo.js',
+        A: aliasPaths.A,
+        B: aliasPaths.B,
       };
-      const inputFilePath = '/x/y/z.js';
-      const output = app.replaceImports(aliases, input, inputFilePath);
-      const expected = 'import foo from \'../../../a/b/c/d/foo\'; // @foo';
-      expect(output).to.equal(expected);
-    });
+      const inputFilePath = importingFiles.c;
 
-    it('should work for multiple imports');
-  });
-
-  xdescribe('import foo from \'../../a/b/foo\'; // @foo', () => {
-    it('should replace "@foo" with the relative path and append alias', () => {
-      const input = 'import foo from \'../../an/old/path/to/foo\'; // @foo';
-      const aliases = {
-        foo: 'asdf'
+      const transform = (inputTxt) => {
+        return app.replaceImports(aliases, inputTxt, inputFilePath);
       };
-      const inputFilePath = '/asdf.js';
-      const output = app.replaceImports(aliases, input, inputFilePath);
-      const expected = 'import foo from \'../../../foo\'; // @foo';
-      expect(output).to.equal(expected);
+
+      expect(fixtureCompare(fixture, transform)).to.equal(true);
     });
   });
 
-  xdescribe('require', () => {});
+  describe('replacing previously replaced imports', () => {
+    it('should replace correctly', () => {
+      const fixture = 'a/b/re-replacing';
+      const aliases = {
+        A: aliasPaths.ANewPath,
+        B: aliasPaths.B,
+      };
+      const inputFilePath = importingFiles.c;
+
+      const transform = (inputTxt) => {
+        return app.replaceImports(aliases, inputTxt, inputFilePath);
+      };
+
+      expect(fixtureCompare(fixture, transform)).to.equal(true);
+    });
+  });
 });

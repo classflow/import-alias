@@ -1,0 +1,2 @@
+import A from '../../../foo/bar/baz/A'; // @A
+import B from '../../../foo/B'; // @B

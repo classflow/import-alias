@@ -1,0 +1,6 @@
+import A from '@A';
+import B, {
+  foo,
+  bar,
+  baz,
+} from '@B';

@@ -1,0 +1,2 @@
+import A from '../some/new/path/A'; // @A
+import B from '../../../foo/B'; // @B
