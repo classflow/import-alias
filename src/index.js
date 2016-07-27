@@ -1,4 +1,4 @@
-#!/user/bin/env node
+#!/usr/bin/env node
 
 import fileFinder from './file-finder';
 import fs from 'fs';
