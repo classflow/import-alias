@@ -123,7 +123,6 @@ export const replaceImports = (aliases, input, inputFilePath) => {
       });
   }
 
-
   return result;
 };
 
