@@ -4,8 +4,8 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "babel-node src/index.js",
-    "test": "mocha --compilers js:babel-register",
-    "watch": "mocha --compilers js:babel-register --reporter min --watch",
+    "test": "NODE_ENV=test mocha --compilers js:babel-register",
+    "watch": "NODE_ENV=test mocha --compilers js:babel-register --reporter min --watch",
     "lint": "eslint .",
     "build": "babel src -d lib",
     "prepublish": "npm run build"

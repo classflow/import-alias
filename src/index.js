@@ -91,37 +91,27 @@ function fileHasImportMarker(fileContent) {
   return (/@[^\s'"]+/g).test(fileContent);
 }
 
+function logAliases(aliases) {
+  const keys = Object.keys(aliases).sort();
+  console.log(`\n${keys.length} known aliases:`);
+  keys.map((alias, i) => {
+    console.log(`${i + 1}. ${alias}\n   ${aliases[alias]}`);
+  })
+}
+
 export const replaceImports = (aliases, input, inputFilePath) => {
   let result = input;
   const reImportRegex = /(from ['"])(.+)(['"];?)(.*(@[^\s'"]+))?/g;
 
   if (fileHasImportMarker(input)) {
-
     result = result.replace(reImportRegex, (orig, from, importString, afterString, tailMarker, tailAlias) => {
-      let alias;
-
-      // Should we use the tailMarker or the importString?
-      if (tailAlias) {
-        alias = getAliasFromMarker(tailAlias);
-      } else {
-
-        // Is importString an alias?
-        if (/@[^\s'"]+/.test(importString)) {
-          alias = getAliasFromMarker(importString);
-        } else {
-
-          // TODO: don't replace all imports, update regex to search for marker in
-          // importString.
-
-          // Bail, this isn't one we need to change.
-          return orig;
-        }
-      }
-
+      const alias = getAliasFromMarker(tailAlias || importString);
       const aliasFilePath = aliases[alias];
 
       if (!aliasFilePath) {
-        // console.log('aliases', aliases);
+        if (process.env.NODE_ENV !== 'test') {
+          logAliases(aliases);
+        }
         throw new Error(
           `You are trying to import "@${alias}" but it is not defined.`);
         }
