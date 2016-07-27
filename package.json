@@ -22,5 +22,9 @@
   "license": "ISC",
   "directories": {
     "test": "test"
-  }
+  },
+  "preferGlobal": "true",
+  "bin": {
+    "import-alias": "lib/index.js"
+ }
 }

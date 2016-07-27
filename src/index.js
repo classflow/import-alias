@@ -1,3 +1,5 @@
+#!/user/bin/env node
+
 import fileFinder from './file-finder';
 import fs from 'fs';
 import path from 'path';
