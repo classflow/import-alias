@@ -1,6 +1,6 @@
-import A from '../some/new/path/A'; // @A
+import A from './some/new/path/A'; // @A
 import B, {
   foo,
   bar,
   baz,
-} from '../../../foo/B'; // @B
+} from '../../foo/B'; // @B

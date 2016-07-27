@@ -2,7 +2,9 @@ import { expect } from 'chai';
 import * as app from '../src';
 import path from 'path';
 import fs from 'fs';
-import fixtureCompare from 'fixture-compare';
+import fixtureCompare, {setLogging} from 'fixture-compare';
+
+setLogging(true);
 
 const fixtures = path.join(__dirname, 'fixtures');
 const aliasPaths = {
@@ -58,7 +60,7 @@ describe('replacing alias imports', () => {
     });
   });
 
-  describe('replacing previously replaced imports', () => {
+  describe('previously replaced imports', () => {
     it('should replace correctly', () => {
       const fixture = 'a/b/re-replacing';
       const aliases = {
