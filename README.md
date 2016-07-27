@@ -50,6 +50,7 @@ Import aliased files with `@{alias}`.
 import Widget from '@Widget';
 import Slim from '@forms/Slim';
 import * as ajax from '@services/ajax';
+import crazy from '@foo-mister_crazy123!!+';
 ```
 
 ### Transforming
@@ -66,6 +67,7 @@ import-alias
 import Widget from './shared/components/Widget'; // @Widget
 import Slim from './shared/components/forms/Slim'; // @forms/Slim
 import * as ajax from '../services/transport/ajax'; // @services/ajax
+import crazy from '../crazy/nicknamed/module'; // @foo-mister_crazy123!!+
 ```
 
 ## Notes

@@ -19,8 +19,7 @@
     "fixture-compare": "^1.1.0",
     "mocha": "^2.5.3"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "license": "ISC",
   "directories": {
     "test": "test"

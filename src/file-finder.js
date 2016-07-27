@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-// TODO: document, make configurable
+// TODO: make configurable
 const ignoredDirs = ['node_modules', '.git', 'lib'];
 
 function isDirIgnored(dirName) {
