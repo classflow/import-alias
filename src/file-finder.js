@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 
 // TODO: make configurable
-const ignoredDirs = ['node_modules', '.git', 'lib'];
+const ignoredDirs = ['node_modules', '.git', 'lib', 'bower_components', 'frameworks'];
 
 function isDirIgnored(dirName) {
   return ignoredDirs.indexOf(dirName) > -1;

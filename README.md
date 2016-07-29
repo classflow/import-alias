@@ -72,7 +72,7 @@ import crazy from '../crazy/nicknamed/module'; // @foo-mister_crazy123!!+
 
 ## Notes
 The current version finds all js, jsx, and es6 files recursively and ignores the
-directories node_modules, .git, and lib.  These options will be made
+directories node_modules, .git, lib, frameworks, and bower_components.  These options will be made
 configurable in a future version.  View the [change log][changelog] for
 details.
 

@@ -9,9 +9,9 @@ const aliasDefinitionRegex = /@alias\s+([^\s'"]+)/g;
 
 export const findFiles = (dirPath) =>
   fileFinder(dirPath).then(files => {
-    return files.filter(filePath =>
-      extensionRegex.test(filePath)
-    )
+        return files.filter(filePath =>
+          extensionRegex.test(filePath)
+      );
   });
 
 /**
@@ -84,11 +84,9 @@ function getRelativePath(fromFile, toFile) {
 }
 
 function getAliasFromMarker(marker) {
-  return marker.replace(/@([^\s'"]+)/, '$1');
-}
-
-function fileHasImportMarker(fileContent) {
-  return (/@[^\s'"]+/g).test(fileContent);
+    if (marker[0] === '@') {
+        return marker.replace(/@([^\s'"]+)/, '$1');
+    }
 }
 
 function logAliases(aliases) {
@@ -103,25 +101,28 @@ export const replaceImports = (aliases, input, inputFilePath) => {
   let result = input;
   const reImportRegex = /(from ['"])(.+)(['"];?)(.*(@[^\s'"]+))?/g;
 
-  if (fileHasImportMarker(input)) {
-    result = result.replace(reImportRegex, (orig, from, importString, afterString, tailMarker, tailAlias) => {
+  // TODO: Test for an import using a marker instead of replacing everything.
+  result = result.replace(reImportRegex, (orig, from, importString, afterString, tailMarker, tailAlias) => {
       const alias = getAliasFromMarker(tailAlias || importString);
       const aliasFilePath = aliases[alias];
 
+      if (!alias) {
+          return orig;
+      }
+
       if (!aliasFilePath) {
-        if (process.env.NODE_ENV !== 'test') {
-          logAliases(aliases);
-        }
-        throw new Error(
-          `You are trying to import "@${alias}" but it is not defined.`);
-        }
+          if (process.env.NODE_ENV !== 'test') {
+              logAliases(aliases);
+          }
+          throw new Error(
+              `You are trying to import "@${alias}" but it is not defined.`);
+          }
 
-        const relativePath = getRelativePath(inputFilePath, aliasFilePath);
-        const result = `${from}${relativePath}${afterString} // @${alias}`;
+          const relativePath = getRelativePath(inputFilePath, aliasFilePath);
+          const result = `${from}${relativePath}${afterString} // @${alias}`;
 
-        return result;
+          return result;
       });
-  }
 
   return result;
 };
@@ -129,23 +130,32 @@ export const replaceImports = (aliases, input, inputFilePath) => {
 // If this is the main module, run it.
 if (require.main === module) {
   const srcDir = process.cwd();
-  console.log(`running import-alias on ${srcDir}`);
+  // console.log(`running import-alias on ${srcDir}`);
 
   findAliases(srcDir).then(aliases => {
+      logAliases(aliases);
 
     if (Object.keys(aliases).length) {
       findFiles(srcDir).then(files => {
 
-        files.map(file => {
-          const content = fs.readFileSync(file, 'utf8');
-          const transformed = replaceImports(aliases, content, file);
+          try {
+              files.map(file => {
+                  const content = fs.readFileSync(file, 'utf8');
+                  const transformed = replaceImports(aliases, content, file);
 
-          if (transformed !== content) {
-            fs.writeFileSync(file, transformed);
-            console.log(`transformed ${file}`);
+                  if (transformed !== content) {
+                      fs.writeFileSync(file, transformed);
+                      console.log(`transformed ${file}`);
+                  }
+              });
+          } catch (e) {
+              console.log('Dang it.', e);
           }
-        });
       });
+    } else {
+        console.log('No aliases found.\nhttps://github.com/classflow/import-alias#defining');
     }
-  });
+}).catch(e => {
+    console.log('error finding aliases', e);
+});
 }
