@@ -127,11 +127,8 @@ export const replaceImports = (aliases, input, inputFilePath) => {
   return result;
 };
 
-// If this is the main module, run it.
-if (require.main === module) {
-  const srcDir = process.cwd();
+export function transform(srcDir) {
   // console.log(`running import-alias on ${srcDir}`);
-
   findAliases(srcDir).then(aliases => {
       logAliases(aliases);
 
@@ -155,7 +152,13 @@ if (require.main === module) {
     } else {
         console.log('No aliases found.\nhttps://github.com/classflow/import-alias#defining');
     }
-}).catch(e => {
-    console.log('error finding aliases', e);
-});
+  }).catch(e => {
+      console.log('error finding aliases', e);
+  });
+}
+
+// If this is the main module, run it.
+if (require.main === module) {
+  const srcDir = process.cwd();
+  transform(srcDir);
 }
