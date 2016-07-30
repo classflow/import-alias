@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fileFinder from './file-finder';
+import fileFinder, {setIgnoredDirs} from './file-finder';
 import fs from 'fs';
 import path from 'path';
 
@@ -47,6 +47,8 @@ function getFileAlias(filePath) {
 */
 export const findAliases = (dirPath) => {
   return findFiles(dirPath).then(files => {
+    console.log('files to check for aliases');
+    console.log(files);
     return Promise.all(files.map(file => {
       return getFileAlias(file);
     })).then(fileAliases => {
@@ -128,7 +130,7 @@ export const replaceImports = (aliases, input, inputFilePath) => {
 };
 
 export function transform(srcDir) {
-  // console.log(`running import-alias on ${srcDir}`);
+  console.log(`running import-alias on ${srcDir}`);
   return findAliases(srcDir).then(aliases => {
       logAliases(aliases);
 
@@ -161,4 +163,8 @@ export function transform(srcDir) {
 if (require.main === module) {
   const srcDir = process.cwd();
   transform(srcDir);
+}
+
+export function ignore(dirs) {
+  setIgnoredDirs(dirs);
 }

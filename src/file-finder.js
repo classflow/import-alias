@@ -1,8 +1,12 @@
 import path from 'path';
 import fs from 'fs';
 
-// TODO: make configurable
-const ignoredDirs = ['node_modules', '.git', 'lib', 'bower_components', 'frameworks'];
+// TODO: make configurable through rc file
+let ignoredDirs = ['node_modules', '.git', 'lib', 'bower_components', 'frameworks'];
+
+export function setIgnoredDirs(dirs) {
+  ignoredDirs = dirs;
+}
 
 function isDirIgnored(dirName) {
   return ignoredDirs.indexOf(dirName) > -1;
