@@ -129,7 +129,7 @@ export const replaceImports = (aliases, input, inputFilePath) => {
 
 export function transform(srcDir) {
   // console.log(`running import-alias on ${srcDir}`);
-  findAliases(srcDir).then(aliases => {
+  return findAliases(srcDir).then(aliases => {
       logAliases(aliases);
 
     if (Object.keys(aliases).length) {
