@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 
 // TODO: make configurable through rc file
-let ignoredDirs = ['node_modules', '.git', 'lib', 'bower_components', 'frameworks'];
+let ignoredDirs = ['node_modules', '.git', 'lib', 'bower_components', 'frameworks', 'fixtures'];
 
 export function setIgnoredDirs(dirs) {
   ignoredDirs = dirs;
