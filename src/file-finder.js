@@ -9,6 +9,7 @@ export function setIgnoredDirs(dirs) {
 }
 
 function isDirIgnored(dirName) {
+  console.log('isDirIgnored', dirName, ignoredDirs);
   return ignoredDirs.indexOf(dirName) > -1;
 }
 

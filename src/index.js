@@ -165,5 +165,5 @@ if (require.main === module) {
 
 export function ignore(dirs) {
   console.log('ignoring dirs', dirs);
-  setIgnoredDirs(dirs);
+  setIgnoredDirs(dirs.slice(0));
 }
