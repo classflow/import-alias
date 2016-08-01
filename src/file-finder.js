@@ -6,7 +6,7 @@ let ignoredDirs = ['node_modules', '.git', 'lib', 'bower_components', 'framework
 
 export function setIgnoredDirs(dirs) {
   ignoredDirs = dirs;
-}
+};
 
 function isDirIgnored(dirName) {
   return ignoredDirs.indexOf(dirName) > -1;
