@@ -5,3 +5,4 @@
 ** pull in .importaliasrc
 * give feedback when running CLI (files found, dirs searched, aliases found,
 replacements made)
+* document -v option and printing of results
