@@ -110,9 +110,9 @@ function getAliasFromMarker(marker) {
 function logAliases(aliases) {
   const keys = Object.keys(aliases).sort();
   console.log(`\n${keys.length} known aliases:`);
-  keys.map((alias, i) => {
-    console.log(`${i + 1}. ${alias}\n   ${aliases[alias]}`);
-  })
+  keys.map(alias => {
+      console.log(`${alias}: ${aliases[alias]}`);
+  });
 }
 
 export const replaceImports = (aliases, input, inputFilePath) => {
@@ -129,9 +129,6 @@ export const replaceImports = (aliases, input, inputFilePath) => {
       }
 
       if (!aliasFilePath) {
-          if (process.env.NODE_ENV !== 'test') {
-              logAliases(aliases);
-          }
           throw new Error(
               `${inputFilePath} is trying to import "@${alias}" but it is not defined.`);
           }
@@ -161,7 +158,11 @@ export function transform(srcDir) {
                   }
               });
           } catch (e) {
-              console.log('Dang it.', e);
+              console.log('\nDang it.\n', e.message);
+
+              if (e.message.match('not defined')) {
+                  logAliases(aliases);
+              }
           }
       });
     } else {
