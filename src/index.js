@@ -51,17 +51,35 @@ export const findAliases = (dirPath) => {
       return getFileAlias(file);
     })).then(fileAliases => {
       const result = {};
+      const dupes = {};
 
-      fileAliases.map((alias, i) => {
-        if (alias) {
+        fileAliases.map((alias, i) => {
+            if (alias) {
 
-          if (result[alias]) {
-            console.warn(`"${alias}" has already been defined as an alias.\n${alias}: ${result[alias]}`)
-          }
+                if (result[alias]) {
+                    dupes[alias] = dupes[alias] || {
+                        alias,
+                        definitions: [],
+                    };
 
-          result[alias] = files[i];
-        }
-      });
+                    dupes[alias].definitions.push(files[i]);
+                } else {
+                    result[alias] = files[i];
+                }
+            }
+        });
+
+        Object.keys(dupes).map(alias => {
+            const dupe = dupes[alias];
+            console.log(`"@${alias}" will be ignored.  It was defined multiple times:`);
+            const definitions = dupe.definitions;
+
+            definitions.unshift(result[alias]);
+            definitions.map(definition => {
+                console.log(`* ${definition}`);
+            });
+            delete result[dupe.alias];
+        });
 
       return result;
     });
