@@ -124,7 +124,7 @@ describe('replacing alias imports', () => {
       };
 
       expect(fn).to
-        .throw('You are trying to import "@unknown" but it is not defined.');
+        .throw('it is not defined');
     });
   });
 });
