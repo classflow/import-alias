@@ -111,8 +111,9 @@ function logAliases(aliases) {
   const keys = Object.keys(aliases).sort();
   console.log(`\n${keys.length} known aliases:`);
   keys.map(alias => {
-      console.log(`${alias}: ${aliases[alias]}`);
+      console.log(`* ${alias}: ${aliases[alias]}`);
   });
+  console.log('');
 }
 
 export const replaceImports = (aliases, input, inputFilePath) => {
@@ -142,35 +143,65 @@ export const replaceImports = (aliases, input, inputFilePath) => {
   return result;
 };
 
+function isVerbose() {
+    return process.argv.indexOf('-v') > -1;
+}
+
+function logResults(results) {
+    logAliases(results.aliases);
+
+    console.log(`${results.transformedFiles.length} transformed files:`);
+    results.transformedFiles.map(file => {
+        console.log(`* ${file}`);
+    });
+    console.log('');
+}
+
 export function transform(srcDir) {
-  return findAliases(srcDir).then(aliases => {
-    if (Object.keys(aliases).length) {
-      findFiles(srcDir).then(files => {
+    const results = {
+        transformedFiles: [],
+        aliases: {},
+    };
 
-          try {
-              files.map(file => {
-                  const content = fs.readFileSync(file, 'utf8');
-                  const transformed = replaceImports(aliases, content, file);
+  return findAliases(srcDir)
+    .then(aliases => {
+        results.aliases = aliases;
 
-                  if (transformed !== content) {
-                      fs.writeFileSync(file, transformed);
-                      console.log(`transformed ${file}`);
-                  }
-              });
-          } catch (e) {
-              console.log('\nDang it.\n', e.message);
+        if (Object.keys(aliases).length) {
+          return findFiles(srcDir).then(files => {
 
-              if (e.message.match('not defined')) {
-                  logAliases(aliases);
-              }
-          }
-      });
-    } else {
-        console.log('No aliases found.\nhttps://github.com/classflow/import-alias#defining');
-    }
-  }).catch(e => {
-      console.log('error finding aliases', e);
-  });
+            try {
+                files.map(file => {
+                    const content = fs.readFileSync(file, 'utf8');
+                    const transformed = replaceImports(aliases, content, file);
+
+                    if (transformed !== content) {
+                        fs.writeFileSync(file, transformed);
+                        results.transformedFiles.push(file)
+                        //   console.log(`transformed ${file}`);
+                    }
+                });
+            } catch (e) {
+                console.log('\nDang it.\n', e.message);
+
+                if (e.message.match('not defined')) {
+                    logAliases(aliases);
+                }
+            }
+
+          });
+        } else {
+            console.log('No aliases found.\nhttps://github.com/classflow/import-alias#defining');
+        }
+      })
+    .then(() => {
+        if (isVerbose()) {
+            logResults(results);
+        }
+    })
+    .catch(e => {
+        console.log('error finding aliases', e);
+    });
 }
 
 // If this is the main module, run it.
