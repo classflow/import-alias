@@ -28,7 +28,8 @@ npm link
 
 ### Defining
 
-Define unique aliases by adding `@alias` comments to files.
+Define unique aliases by adding `@alias` comments to files.  Most characters are
+supported.
 
 ```js
 // @alias Widget
@@ -40,6 +41,10 @@ Define unique aliases by adding `@alias` comments to files.
 
 ```js
 // @alias services/ajax
+```
+
+```js
+// @alias foo-mister_crazy123!!+
 ```
 
 ### Importing
@@ -55,6 +60,7 @@ import crazy from '@foo-mister_crazy123!!+';
 
 ### Transforming
 
+#### CLI
 Transform the import statements at any time by running `import-alias` in the
 root directory.  The alias will be replaced with a relative path and a marker
 appended to the line for future transformations.
@@ -63,6 +69,7 @@ appended to the line for future transformations.
 import-alias
 ```
 
+**rewritten source**
 ```js
 import Widget from './shared/components/Widget'; // @Widget
 import Slim from './shared/components/forms/Slim'; // @forms/Slim
@@ -70,11 +77,28 @@ import * as ajax from '../services/transport/ajax'; // @services/ajax
 import crazy from '../crazy/nicknamed/module'; // @foo-mister_crazy123!!+
 ```
 
+#### As a Module
+You can also use import-alias from other code.
+
+```js
+import { transform, ignore } from 'import-alias';
+ignore(['libraries', 'min', 'build']);
+transform('path/to/source').then(() => {
+    console.log('Life is easy.');
+});
+```
+
 ## Notes
 The current version finds all js, jsx, and es6 files recursively and ignores the
-directories node_modules, .git, lib, frameworks, and bower_components.  These options will be made
-configurable in a future version.  View the [change log][changelog] for
-details.
+directories node_modules, .git, lib, frameworks, and bower_components.  These
+options will be made configurable in a future version.  View the [change log]
+[changelog] for details.
+
+
+
+
+
+
 
 ---
 kickstarted by [npm-boom][npm-boom]
