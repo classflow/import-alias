@@ -14,12 +14,14 @@ const aliasPaths = {
   B: path.join(fixtures, 'foo/B.js'),
   Component1: path.join(fixtures, 'foo/bar/Component1.es6'),
   'foo-mister_crazy123!!+': path.join(fixtures, 'crazy/nicknamed/module.js'),
+  'proxyquire': path.join(fixtures, 'proxyquire'),
 };
 
 const importingFiles = {
   c: path.join(fixtures, 'a/b/c.js'),
   'unknown-alias': path.join(fixtures, 'importers/unknown-alias'),
   'crazy-alias': path.join(fixtures, 'importers/crazy-alias'),
+  proxyquire: path.join(fixtures, 'importers/proxyquire'),
 };
 
 describe('finding files', () => {
@@ -123,8 +125,25 @@ describe('replacing alias imports', () => {
         app.replaceImports(aliases, inputText, inputFilePath);
       };
 
-      expect(fn).to
-        .throw('it is not defined');
+      expect(fn).to.throw('it is not defined');
+    });
+  });
+
+  describe('proxyquire', () => {
+    describe('import', () => {
+      it('should replace the first param used for proxyquire', () => {
+        const fixture = 'importers/proxyquire';
+        const inputFilePath = importingFiles.proxyquire;
+        const aliases = {
+          'proxyquire': aliasPaths.proxyquire,
+        };
+
+        const transform = (inputTxt) => {
+          return app.replaceImports(aliases, inputTxt, inputFilePath);
+        };
+
+        expect(fixtureCompare(fixture, transform)).to.equal(true);
+      });
     });
   });
 });

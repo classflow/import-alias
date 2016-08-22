@@ -116,29 +116,49 @@ function logAliases(aliases) {
   console.log('');
 }
 
+function missingAliasFilePath(inputFilePath, alias) {
+  throw new Error(
+    `${inputFilePath} is trying to import "@${alias}" but it is not defined.`);
+}
+
 export const replaceImports = (aliases, input, inputFilePath) => {
   let result = input;
-  const reImportRegex = /(from ['"])(.+)(['"];?)(.*(@[^\s'"]+))?/g;
+  const initialImportRegex = /(['"])(@[^\s]+)(['"].*)/g;
+  const reImportRegex = /(['"])(.+)(['"].*)(@[^\s]+)/g;
 
   // TODO: Test for an import using a marker instead of replacing everything.
-  result = result.replace(reImportRegex, (orig, from, importString, afterString, tailMarker, tailAlias) => {
-      const alias = getAliasFromMarker(tailAlias || importString);
-      const aliasFilePath = aliases[alias];
+  result = result.replace(reImportRegex, (orig, a, b, c, d) => {
+    const alias = getAliasFromMarker(d);
+    const aliasFilePath = aliases[alias];
 
-      if (!alias) {
-          return orig;
-      }
+    if (!alias) {
+        return orig;
+    }
 
-      if (!aliasFilePath) {
-          throw new Error(
-              `${inputFilePath} is trying to import "@${alias}" but it is not defined.`);
-          }
+    if (!aliasFilePath) {
+      missingAliasFilePath(inputFilePath, alias);
 
-          const relativePath = getRelativePath(inputFilePath, aliasFilePath);
-          const result = `${from}${relativePath}${afterString} // @${alias}`;
+    }
 
-          return result;
-      });
+    const relativePath = getRelativePath(inputFilePath, aliasFilePath);
+    return `${a}${relativePath}${c}@${alias}`;
+  });
+
+  result = result.replace(initialImportRegex, (orig, a, b, c) => {
+    const alias = getAliasFromMarker(b);
+    const aliasFilePath = aliases[alias];
+
+    if (!alias) {
+        return orig;
+    }
+
+    if (!aliasFilePath) {
+      missingAliasFilePath(inputFilePath, alias);
+    }
+
+    const relativePath = getRelativePath(inputFilePath, aliasFilePath);
+    return `${a}${relativePath}${c} // @${alias}`;
+  });
 
   return result;
 };
