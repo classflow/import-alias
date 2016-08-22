@@ -14,7 +14,8 @@ const aliasPaths = {
   B: path.join(fixtures, 'foo/B.js'),
   Component1: path.join(fixtures, 'foo/bar/Component1.es6'),
   'foo-mister_crazy123!!+': path.join(fixtures, 'crazy/nicknamed/module.js'),
-  'proxyquire': path.join(fixtures, 'proxyquire'),
+  proxyquire: path.join(fixtures, 'proxyquire'),
+  require: path.join(fixtures, 'require'),
 };
 
 const importingFiles = {
@@ -22,6 +23,7 @@ const importingFiles = {
   'unknown-alias': path.join(fixtures, 'importers/unknown-alias'),
   'crazy-alias': path.join(fixtures, 'importers/crazy-alias'),
   proxyquire: path.join(fixtures, 'importers/proxyquire'),
+  require: path.join(fixtures, 'importers/require'),
 };
 
 describe('finding files', () => {
@@ -130,20 +132,35 @@ describe('replacing alias imports', () => {
   });
 
   describe('proxyquire', () => {
-    describe('import', () => {
-      it('should replace the first param used for proxyquire', () => {
-        const fixture = 'importers/proxyquire';
-        const inputFilePath = importingFiles.proxyquire;
-        const aliases = {
-          'proxyquire': aliasPaths.proxyquire,
-        };
+    it('should replace the first param used for proxyquire', () => {
+      const fixture = 'importers/proxyquire';
+      const inputFilePath = importingFiles.proxyquire;
+      const aliases = {
+        'proxyquire': aliasPaths.proxyquire,
+      };
 
-        const transform = (inputTxt) => {
-          return app.replaceImports(aliases, inputTxt, inputFilePath);
-        };
+      const transform = (inputTxt) => {
+        return app.replaceImports(aliases, inputTxt, inputFilePath);
+      };
 
-        expect(fixtureCompare(fixture, transform)).to.equal(true);
-      });
+      expect(fixtureCompare(fixture, transform)).to.equal(true);
+    });
+  });
+
+  describe('require', () => {
+    it('should replace the first param used for require', () => {
+      const fixture = 'importers/require';
+      const inputFilePath = importingFiles.require;
+      const aliases = {
+        require: aliasPaths.require,
+      };
+
+
+      const transform = (inputTxt) => {
+        return app.replaceImports(aliases, inputTxt, inputFilePath);
+      };
+
+      expect(fixtureCompare(fixture, transform)).to.equal(true);
     });
   });
 });

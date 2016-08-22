@@ -126,6 +126,7 @@ export const replaceImports = (aliases, input, inputFilePath) => {
   const initialImportRegex = /(['"])(@[^\s]+)(['"].*)/g;
   const reImportRegex = /(['"])(.+)(['"].*)(@[^\s]+)/g;
 
+
   // TODO: Test for an import using a marker instead of replacing everything.
   result = result.replace(reImportRegex, (orig, a, b, c, d) => {
     const alias = getAliasFromMarker(d);
