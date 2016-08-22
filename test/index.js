@@ -16,6 +16,7 @@ const aliasPaths = {
   'foo-mister_crazy123!!+': path.join(fixtures, 'crazy/nicknamed/module.js'),
   proxyquire: path.join(fixtures, 'proxyquire'),
   require: path.join(fixtures, 'require'),
+  'falseflag': path.join(fixtures, 'falseflag'),
 };
 
 const importingFiles = {
@@ -24,6 +25,7 @@ const importingFiles = {
   'crazy-alias': path.join(fixtures, 'importers/crazy-alias'),
   proxyquire: path.join(fixtures, 'importers/proxyquire'),
   require: path.join(fixtures, 'importers/require'),
+  'falseflag': path.join(fixtures, 'importers/falseflag'),
 };
 
 describe('finding files', () => {
@@ -155,6 +157,22 @@ describe('replacing alias imports', () => {
         require: aliasPaths.require,
       };
 
+
+      const transform = (inputTxt) => {
+        return app.replaceImports(aliases, inputTxt, inputFilePath);
+      };
+
+      expect(fixtureCompare(fixture, transform)).to.equal(true);
+    });
+  });
+
+  describe('falseflag', () => {
+    it('should not mess with this', () => {
+      const fixture = 'importers/falseflag';
+      const inputFilePath = 'whatever';
+      const aliases = {
+        'falseflag.com",': 'false/flag',
+      };
 
       const transform = (inputTxt) => {
         return app.replaceImports(aliases, inputTxt, inputFilePath);

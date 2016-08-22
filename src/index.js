@@ -124,7 +124,8 @@ function missingAliasFilePath(inputFilePath, alias) {
 export const replaceImports = (aliases, input, inputFilePath) => {
   let result = input;
   const initialImportRegex = /(['"])(@[^\s]+)(['"].*)/g;
-  const reImportRegex = /(['"])(.+)(['"].*)(@[^\s]+)/g;
+  // const reImportRegex = /(['"])(.+)(['"].*)(@[^\s]+)/g;
+  const reImportRegex = /(['"])(.+)(['"].*\/\/ )(@[^\s]+)/g;
 
 
   // TODO: Test for an import using a marker instead of replacing everything.
